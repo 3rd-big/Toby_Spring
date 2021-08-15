@@ -3,13 +3,15 @@ package com.example.chap01;
 import java.sql.*;
 
 public class UserDao {
-    public void add(User user) throws ClassNotFoundException, SQLException {
-        String URL = "jdbc:oracle:thin:@192.168.55.10:11521:direadb";
-        String USER = "study";
-        String PASSWORD = "1234";
 
-        Class.forName("oracle.jdbc.driver.OracleDriver");
-        Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+    private ConnectionMaker connectionMaker;
+
+    public UserDao(ConnectionMaker connectionMaker) {
+        this.connectionMaker = connectionMaker;
+    }
+
+    public void add(User user) throws ClassNotFoundException, SQLException {
+        Connection connection = connectionMaker.getConnection();
 
         PreparedStatement preparedStatement = connection.prepareStatement("insert into users(id, name, password) values (?, ?, ?)");
         preparedStatement.setString(1, user.getId());
@@ -23,12 +25,7 @@ public class UserDao {
     }
 
     public User get(String id) throws ClassNotFoundException, SQLException {
-        String URL = "jdbc:oracle:thin:@192.168.55.10:11521:direadb";
-        String USER = "study";
-        String PASSWORD = "1234";
-
-        Class.forName("oracle.jdbc.driver.OracleDriver");
-        Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+        Connection connection = connectionMaker.getConnection();
 
         PreparedStatement preparedStatement = connection.prepareStatement("select * from users where id = ?");
         preparedStatement.setString(1, id);
