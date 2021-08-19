@@ -2,6 +2,9 @@ package com.example.chap01;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.datasource.SimpleDriverDataSource;
+
+import javax.sql.DataSource;
 
 @Configuration
 public class DaoFactory {
@@ -9,12 +12,24 @@ public class DaoFactory {
     @Bean
     public UserDao userDao() {
         UserDao userDao = new UserDao();
-        userDao.setConnectionMaker(connectionMaker());
+        userDao.setDataSource(dataSource());
         return userDao;
     }
 
     @Bean
-    public ConnectionMaker  connectionMaker() {
-        return new DConnectionMaker();
+    public DataSource dataSource() {
+        SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
+
+        dataSource.setDriverClass(oracle.jdbc.driver.OracleDriver.class);
+        dataSource.setUrl("jdbc:oracle:thin:@192.168.55.10:11521:direadb");
+        dataSource.setUsername("study");
+        dataSource.setPassword("1234");
+
+        return dataSource;
     }
+
+//    @Bean
+//    public ConnectionMaker  connectionMaker() {
+//        return new DConnectionMaker();
+//    }
 }
